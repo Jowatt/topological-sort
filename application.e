@@ -20,7 +20,7 @@ feature {NONE} -- Initialization
 			topological: TOPOLOGICAL_SORT
 			elements: LINKED_LIST[INTEGER]
 			constraints: LINKED_LIST[TUPLE[INTEGER, INTEGER]]
-			sorted: LINKED_LIST[INTEGER]
+			no_cycle: BOOLEAN
 		do
 			create elements.make
 			create constraints.make
@@ -34,11 +34,18 @@ feature {NONE} -- Initialization
 			constraints.extend ([2, 3])
 			constraints.extend ([3, 4])
 			constraints.extend ([4, 5])
+			-- constraints.extend ([5, 4])
 			create topological.make(elements, constraints)
-			sorted := topological.sort
+			no_cycle := topological.sort
+
+			if no_cycle then
+				io.put_string ("Sort completed%N")
+			else
+				io.put_string ("Cycle detected%N")
+			end
 
 			io.put_string ("Sorted:%N")
-			across sorted as s
+			across topological.sorted as s
 			loop
 			 io.put_string (s.item.out + "%N")
 			end

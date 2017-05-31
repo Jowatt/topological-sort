@@ -13,6 +13,8 @@ create
 feature
 	make (elems: LINKED_LIST[INTEGER];
 			cons: LINKED_LIST[TUPLE[INTEGER, INTEGER]])
+		note
+			status: creator
 		local
 			e0, e1: INTEGER
 		do
@@ -21,8 +23,6 @@ feature
 			create successors.make_filled (create {LINKED_LIST[INTEGER]}.make, 1, elements.count)
 			create predecessor_count.make_filled (0, 1, elements.count)
 			create candidates.make
-
-			-- fill the fuckin' structures
 
 			across 1 |..| elements.count as i loop
 				successors.put (create {LINKED_LIST[INTEGER]}.make, i.item)
@@ -40,6 +40,8 @@ feature
 					candidates.put (pred.target_index)
 				end
 			end
+
+			create sorted.make
 	end
 
 feature {NONE}
@@ -85,13 +87,18 @@ feature {NONE}
 	end
 
 feature
-	sort: LINKED_LIST[INTEGER]
+	sorted: LINKED_LIST[INTEGER]
+
+	sort: BOOLEAN
+	require
+		-- nothing
 	local
-		sorted: LINKED_LIST[INTEGER]
 		next: INTEGER
 	do
 		from
 			create sorted.make
+		invariant
+			true
 		until
 			candidates.is_empty
 		loop
@@ -105,14 +112,39 @@ feature
 					candidates.put (s.item)
 				end
 			end
+		variant
+			elements.count - sorted.count
 		end
 
-		if elements.count = sorted.count then
-			io.put_string ("Sort completed%N")
-		else
-			io.put_string ("Cycle detected%N")
-		end
-
-	 	Result := sorted
+	 	Result := elements.count = sorted.count
+	ensure
+		-- TODO ensure
 	end
+
+feature {NONE}
+	relation: MML_RELATION[INTEGER, INTEGER]
+	note
+		status: ghost
+	attribute
+	end
+
+	is_in_closure (couple: TUPLE[INTEGER, INTEGER]): BOOLEAN
+	note:
+		status: ghost
+	do
+		-- TODO implement
+		Result := false
+	end
+
+	is_sorted(s: MML_SEQUENCE[INTEGER]): BOOLEAN
+	note
+		status: functional, ghost
+	do
+		-- TODO implement
+		Result := true
+	end
+
+	invariant
+		constraints_relation: across constraints as c all
+			relation.has(c.item.integer_item (1), c.item.integer_item (2))  end
 end
