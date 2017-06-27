@@ -11,10 +11,12 @@ create
 	make
 
 feature
-	make (elems: LINKED_LIST[INTEGER];
+	make (elems: LINKED_LIST[INTEGER]; -- only need and INTEGER
 			cons: LINKED_LIST[TUPLE[INTEGER, INTEGER]])
 		note
 			status: creator
+		require
+			-- consistency between constraints and elems
 		local
 			e0, e1: INTEGER
 		do
@@ -45,6 +47,8 @@ feature
 	end
 
 feature {NONE}
+	-- TODO use V_* classes
+	-- there is no V_TUPLE, so implement the class for couple
 	elements: LINKED_LIST[INTEGER]
 	constraints: LINKED_LIST[TUPLE[INTEGER, INTEGER]]
 	successors: ARRAY[LINKED_LIST[INTEGER]]
@@ -106,6 +110,7 @@ feature
 			candidates.remove
 
 			sorted.extend (next)
+			-- rewrite the across loop with loop construct
 			across successors.at (next) as s loop
 				predecessor_count[s.item] := predecessor_count[s.item] - 1
 				if predecessor_count[s.item] = 0 then
@@ -113,7 +118,7 @@ feature
 				end
 			end
 		variant
-			elements.count - sorted.count
+			elements.count - sorted.count -- prove
 		end
 
 	 	Result := elements.count = sorted.count
@@ -129,7 +134,7 @@ feature {NONE}
 	end
 
 	is_in_closure (couple: TUPLE[INTEGER, INTEGER]): BOOLEAN
-	note:
+	note
 		status: ghost
 	do
 		-- TODO implement
