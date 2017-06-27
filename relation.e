@@ -55,8 +55,8 @@ feature
 		rel.has (first, second)
 		-- not old rel.has (first, second) = (rel.count = old rel.count + 1)
 		across old rel as pair all rel.has (pair.item.left, pair.item.right) end
-		across rel as pair all old rel.has (pair.item.left, pair.item.right) and
-			not (pair.item.left = first and pair.item.right = second) end
+		across rel as pair all (old rel).has (pair.item.left, pair.item.right)
+			and not (pair.item.left = first and pair.item.right = second) end
 	end
 
 	remove(first, second: INTEGER) do
